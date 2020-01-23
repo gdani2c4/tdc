@@ -3,7 +3,8 @@ import sys, json, re
 def main():
 	achvo_prog_nom = sys.argv[1]
 	trdv_ant_nom = sys.argv[2]
-	trdv_nv = []
+	trdv_nv = {}
+	trdv_ant = {}
 	rstdo = {}
 	print( sys.argv[2] )
 	achvo_prog = { "ficha_v": [], "achvo_cda": "" }
@@ -11,15 +12,9 @@ def main():
 	#	para traducir
 	achvo_prog_leer( achvo_prog_nom, achvo_prog )
 	as_achvo_prog( achvo_prog, trdv_nv )
-	print( trdv_nv )
-#	# depuración: imprimir las cadenas encontradas
-#	for ii in rstdo["trdv_nv"]:
-#		for kk in range(len(achvo_prog["ficha_v"])):
-#			if ii.group("fch%d" % kk):
-#				print( ii.group("fch%d" % kk))
-	rstdo = {"trdv_ant": []}
-	trdv_ant_leer( trdv_ant_nom, rstdo )
-#	trdv_unir( rstdo["trdv_ant"], trdv_nv )
+	trdv_ant_leer( trdv_ant_nom, trdv_ant )
+	trdv_unir( trdv_ant, trdv_nv )
+	print( json.dumps( trdv_nv, indent = 4 ) )
 
 ficha_dat = {
 "js": [
@@ -40,7 +35,6 @@ def achvo_prog_leer( achvo_nom, rstdo ):
 		[ii for ii in open( achvo_nom )] )
 
 def as_achvo_prog( achvo_prog, rstdo ):
-#	rstdo["trdv_nv"] = \
 	re_rstdo = \
 	re.finditer( "".join(
 		# dejé un grupo "xx" para "fch + cda + fch" entero
@@ -57,15 +51,16 @@ def as_achvo_prog( achvo_prog, rstdo ):
 	for ii in re_rstdo:
 		for kk in range( len(achvo_prog["ficha_v"] ) ):
 			if ii.group( "fch%d" % kk ):
-				rstdo.append(
-					ii.group( "fch%d" % kk ) )
+				rstdo[ ii.group( "fch%d" % kk ) ] = ""
 
 def trdv_ant_leer( trdv_ant_nom, rstdo ):
 	rstdo[ "trdv_ant" ] = json.load( open(
 		trdv_ant_nom ) )
 
-#dev trdv_unir( trdv_ant, trdv_nv )
-#	for ii in trdv_ant:
+def trdv_unir( trdv_ant, trdv_nv ):
+	for ii in trdv_nv:
+		if ii in trdv_ant:
+			trdv_nv[ ii ] = trdv_ant[ ii ]
 
 if __name__ == "__main__":
 	main()
