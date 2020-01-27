@@ -61,7 +61,6 @@ def tdc_achos_prog( ach_prog_nomv ):
 		rstdo = {}
 		tdcv_leer( rstdo )
 		tdc_v = rstdo[ "tdc_v" ]
-		print( tdc_v )
 		with open(ach_prog_nom, "r" ) as ach_prog:
 			cda_prog = ach_prog.read()
 			for ii in tdc_v["cda"]:
